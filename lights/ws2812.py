@@ -20,8 +20,8 @@ LED_BRIGHTNESS = 255      # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
-def setStripColor(strip=strip, color):
-    """Set color of entire strip at once."""
+def setStripColor(color):
+    """Set color of entire strip at once.""" # TODO - update this for handling multiple strips in the same thread
     [strip.setPixelColor(i, color) for i in range(LED_COUNT)]
     strip.show()
 
@@ -62,7 +62,7 @@ def rainbowCycle(strip, wait_ms=20, iterations=5):
     """Draw rainbow that uniformly distributes itself across all pixels."""
     for j in range(256*iterations):
         for i in range(strip.numPixels()):
-            strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255) or 1)
+            strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255) or int(random.random() * 255))
         strip.show()
         time.sleep(wait_ms/1000.0)
 
