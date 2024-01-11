@@ -5,8 +5,10 @@ import tkinter as tk
 from lidar import get_lidar_distance
 from PIL import Image, ImageTk
 
-def draw_target_mark(img):
-    cv2.circle(img, (100,100),63,(0,0,255), 1)
+def draw_target_mark(img, panel):
+    origin_x = int(panel.winfo_width() / 2)
+    origin_y = int(panel.winfo_height() / 2)
+    cv2.circle(img, (origin_x, origin_y), 30, (0,0,255), 1)
 
 # Function to update GUI with new frame
 def update_gui():
@@ -31,9 +33,8 @@ def update_gui():
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Convert to ImageTk format
-        draw_target_mark(frame_rgb)
+        draw_target_mark(frame_rgb, panel)
         img = Image.fromarray(frame_rgb)
-        #draw_target_mark(img)
         img_tk = ImageTk.PhotoImage(image=img)
 
         # Update the label in the GUI
