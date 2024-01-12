@@ -8,7 +8,8 @@ from PIL import Image, ImageTk
 def draw_target_mark(img, panel):
     origin_x = int(panel.winfo_width() / 2)
     origin_y = int(panel.winfo_height() / 2)
-    cv2.circle(img, (origin_x, origin_y), 30, (0,0,255), 1)
+    cir_radius = 70
+    cv2.circle(img, (origin_x, origin_y), cir_radius, (0,0,255), 1)
 
 # Function to update GUI with new frame
 def update_gui():
