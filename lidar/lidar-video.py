@@ -18,7 +18,10 @@ def update_gui():
         _, frame = cap.read()
 
         # Get distance from TF-Luna Lidar (replace this with your actual implementation)
-        lidar_distance = get_lidar_distance()
+        try:
+            lidar_distance = get_lidar_distance()
+        except Exception as e:
+             print(f"Failed to load lidar distance. Error: {e}")
         warning_text = f"WARNING! {lidar_distance} m! Too close!"
         overlay_text = None
         color_tuple = (0,255,0)
