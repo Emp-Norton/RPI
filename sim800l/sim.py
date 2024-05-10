@@ -51,13 +51,17 @@ class SIM800Module:
             print("Not connected to SIM800 module.")
 
     def read_messages(self):
+        message_pile = []
         if self.isConnected:
             self.ser.write(b'AT+CMGL="ALL"\r\n')
             response = self.ser.readlines()
             for line in response:
-                print(line.decode("utf-8").strip())
+                cleaned_line = line.decode("utf-8").strip()
+                print(cleaned_line)
+                message_pile.append(cleaned_line)
         else:
             print("Not connected to SIM800 module.")
+        return message_pile
 
     def delete_message(self, index):
         if self.isConnected:
@@ -102,4 +106,12 @@ if __name__ == "__main__":
     sim_module = SIM800Module()
     sim_module.connect()
     sim_module.check_status()
+    formatter = OpenAIFormatter()
 
+    while True:
+        messages = sim_module.read_messages()
+        while len(messages) > 0:
+            llm_responses = formatter.send_prompt(messages.pop())
+            print(f"Sending {llm_responses}")
+            if llm_responses is not None:
+                sim_module.send_message("+14159646380", llm_responses)
