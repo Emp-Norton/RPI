@@ -1,1 +1,3 @@
 sim800l/.env
+**/*/__pycache__/
+**/*/node_modules/
