@@ -108,7 +108,7 @@ if __name__ == "__main__":
     sim_module.check_status()
     formatter = OpenAIFormatter()
 
-    while True:
+    while True and sim_module.isConnected:
         messages = sim_module.read_messages()
         while len(messages) > 0:
             llm_responses = formatter.send_prompt(messages.pop())
