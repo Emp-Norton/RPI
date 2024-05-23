@@ -1,4 +1,5 @@
 import serial
+import json
 import time
 import os
 
@@ -10,6 +11,7 @@ oaikey = config('OAIKEY')
 class SIM800Module:
     def __init__(self, port="/dev/serial0", baudrate=115000):
         self.port = port
+        self.engageAi = False
         self.baudrate = baudrate
         self.ser = serial.Serial(self.port, self.baudrate, timeout=1)
         self.isConnected = False
@@ -19,13 +21,20 @@ class SIM800Module:
             self.ser.open()
             self.ser.write(b"AT\r\n")
             response = self.ser.readlines()
+            print(response)
             if "OK" in str(response):
                 self.isConnected = True
                 print("Connected to SIM800 module.")
             else:
                 print("Failed to connect to SIM800 module.")
+        else:
+            self.isConnected=True
+            print("Possibly already connected.")
 
     def check_status(self):
+        """
+        Checks status of connection between RPI and Sim Module. Takes no arguments.
+        """
         if self.isConnected:
             self.ser.write(b"AT+CSQ\r\n")
             response = self.ser.readlines()
@@ -110,8 +119,20 @@ if __name__ == "__main__":
 
     while True and sim_module.isConnected:
         messages = sim_module.read_messages()
+        print("checking")
+        debugger;
         while len(messages) > 0:
-            llm_responses = formatter.send_prompt(messages.pop())
-            print(f"Sending {llm_responses}")
-            if llm_responses is not None:
-                sim_module.send_message("+14159646380", llm_responses)
+            for message in messages:
+                message = messages.pop()
+                if "+CMT:" in message:
+                    print(message)
+                    url = message.split(',')[2].strip()
+                    print(url)
+                    requests.get(url)
+                    response = json.loads(res.text)
+                    print(f"{request}\n{response}")
+ #           if sim_module.engageAI:
+#                llm_responses = formatter.send_prompt(messages.pop())
+  #              print(f"Sending {llm_responses}")
+   #             if llm_responses is not None:
+   #                sim_module.send_message("+14159646380", llm_responses)
