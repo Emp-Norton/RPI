@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Raspberry Pi Camera Stream</title>
+  <style>
+    #video-stream {
+      width: 640px;
+      height: 480px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <div id="video-stream"></div>
+  <button id="record-button">Start Recording</button>
+  <button id="still-button">Take Still Image</button>
+  <button id="up-button">&uarr;</button>
+  <button id="down-button">&darr;</button>
+  <button id="left-button">&larr;</button>
+  <button id="right-button">&rarr;</button>
+  <button id="zoom-in-button">+</button>
+  <button id="zoom-out-button">-</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Set up video streaming
+    socket.on('video', (data) => {
+      const videoStream = document.getElementById('video-stream');
+      videoStream.src = URL.createObjectURL(new Blob([data], { type: 'video/h264' }));
+    });
+
+    // Set up PTZ control
+    document.getElementById('up-button').addEventListener('click', () => {
+      socket.emit('ptz', 'up');
+    });
+    document.getElementById('down-button').addEventListener('click', () => {
+      socket.emit('ptz', 'down');
+    });
+    document.getElementById('left-button').addEventListener('click', () => {
+      socket.emit('ptz', 'left');
+    });
+    document.getElementById('right-button').addEventListener('click', () => {
+      socket.emit('ptz', 'right');
+    });
+    document.getElementById('zoom-in-button').addEventListener('click', () => {
+      socket.emit('ptz', 'zoomIn');
+    });
+    document.getElementById('zoom-out-button').addEventListener('click', () => {
+      socket.emit('ptz', 'zoomOut');
+    });
+
+    // Set up recording
+    document.getElementById('record-button').addEventListener('click', () => {
+      if (document.getElementById('record-button').textContent === 'Start Recording') {
+        socket.emit('record', 'start');
+        document.getElementById('record-button').textContent = 'Stop Recording';
+      } else {
+        socket.emit('record', 'stop');
+        document.getElementById('record-button').textContent = 'Start Recording';
+      }
+    });
+
+    // Set up still image capture
+    document.getElementById('still-button').addEventListener('click', () => {
+      socket.emit('still');
+    });
+  </script>
+</body>
+</html>
