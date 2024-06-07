@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PTZ Camera Controller</title>
+  <style>
+    #video {
+      width: 640px;
+      height: 480px;
+    }
+  </style>
+</head>
+<body>
+  <h1>PTZ Camera Controller</h1>
+  <video id="video" autoplay></video>
+  <button id="record-button">Start Recording</button>
+  <button id="still-button">Take Still Image</button>
+  <button id="up-button">&uarr;</button>
+  <button id="down-button">&darr;</button>
+  <button id="left-button">&larr;</button>
+  <button id="right-button">&rarr;</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.1.2/dist/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const video = document.getElementById('video');
+    const recordButton = document.getElementById('record-button');
+    const stillButton = document.getElementById('still-button');
+    const upButton = document.getElementById('up-button');
+    const downButton = document.getElementById('down-button');
+    const leftButton = document.getElementById('left-button');
+    const rightButton = document.getElementById('right-button');
+
+    // Set up video stream
+    const stream = new MediaStream();
+    video.srcObject = stream;
+
+    // Add video stream to socket.io connection
+    socket.on('connect', () => {
+      const videoUrl = 'http://localhost:3000/stream';
+      fetch(videoUrl)
+        .then((response) => response.body)
+        .then((body) => {
+          const videoStream = body.getReader();
+          videoStream.read().then(function process({ done, value }) {
+            if (done) return;
+            stream.addTrack(value);
+            videoStream.read().then(process);
+          });
+        });
+    });
+
+    // PTZ control
+    upButton.addEventListener('click', () => {
+      socket.emit('move', 'up');
+    });
+    downButton.addEventListener('click', () => {
+      socket.emit('move', 'down');
+    });
+    leftButton.addEventListener('click', () => {
+      socket.emit('move', 'left');
+    });
+    rightButton.addEventListener('click', () => {
+      socket.emit('move', 'right');
+    });
+
+    // Recording
+    recordButton.addEventListener('click', () => {
+      socket.emit('record');
+    });
+
+    // Still image
+    stillButton.addEventListener('click', () => {
+      socket.emit('still');
+    });
+  </script>
+</body>
+</html>
+
