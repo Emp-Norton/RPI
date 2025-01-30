@@ -10,3 +10,13 @@ vfs = storage.VfsFat(sdcard)
 storage.mount(vfs, "/sd")
 
 os.listdir()
+
+
+class SDCardModule:
+    """
+    Convenience class to facilitate setting up SDCard storage for Raspberry Pi Pico.
+    Expects serial peripheral interface (SPI) only at this time.
+    
+    Args:
+        miso (Pin): 
+    """
