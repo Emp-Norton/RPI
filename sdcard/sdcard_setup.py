@@ -16,7 +16,15 @@ class SDCardModule:
     """
     Convenience class to facilitate setting up SDCard storage for Raspberry Pi Pico.
     Expects serial peripheral interface (SPI) only at this time.
-    
+
     Args:
-        miso (Pin): 
+        miso (microcontroller.Pin): The MISO (Master In Slave Out) pin, e.g., board.GP9
+	mosi (microcontroller.Pin): The MOSI (Master Out Slave In) pin, e.g., board.GP8
+	sck  (microcontroller.Pin): The SCLK (Serial Clock) pin, e.g., board.GP11
+	cs   (microcontroller.Pin): The CS (Chip Select) pin, e.g., board.GP10
+
+    Example:
+    >>> import board
+    >>> sd_card = SDCardModule(sck=board.GP11, miso=board.GP9,
+				mosi=board.GP8, cs=board.GP10)
     """
