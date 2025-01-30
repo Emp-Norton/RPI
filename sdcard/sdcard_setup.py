@@ -63,3 +63,14 @@ class SDCardModule:
 
 	except Exception as e:
 	    print(f"Unable to mount {self.mount_path}: {e}")
+
+    def list_files(self, path=self.mount_path, recursive=False):
+	def recurse_dirs(dirs):
+	    for dir in dirs:
+                recurse_dirs(os.listdir(dir))
+
+	if recursive:
+            dirs = os.listdir(path)
+	    recurse_dirs(dirs)
+	else:
+	    print(f"{os.listdir(path)}")
